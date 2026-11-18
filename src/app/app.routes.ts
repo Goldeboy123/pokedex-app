@@ -20,4 +20,10 @@ export const routes: Routes = [
         (m) => m.DetailPokemonPage
       ),
   },
+  {
+    path: '**',
+    redirectTo: 'list-pokemon',
+    pathMatch: 'full',
+  },
+  
 ];

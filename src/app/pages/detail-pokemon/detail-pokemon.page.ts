@@ -1,7 +1,27 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular';
+import { Component, inject, signal } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import {
+  IonContent,
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardContent,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonImg,
+  IonText,
+  IonProgressBar,
+  IonFab,
+  IonFabButton,
+  IonIcon,
+  LoadingController,
+} from '@ionic/angular';
+import { addIcons } from 'ionicons';
+import { close } from 'ionicons/icons';
+import { Pokemon } from '../../services/pokemon';
+import { IPokemon } from '../../models/pokemon.model';
+import { GetStatPipe } from '../../pipes/get-stat-pipe';
 
 @Component({
   selector: 'app-detail-pokemon',
@@ -9,15 +29,57 @@ import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular';
   styleUrls: ['./detail-pokemon.page.scss'],
   imports: [
     IonContent,
-    IonHeader,
-    IonTitle,
-    IonToolbar,
-    CommonModule,
-    FormsModule,
+    IonCard,
+    IonCardHeader,
+    IonCardTitle,
+    IonCardContent,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonImg,
+    IonText,
+    IonProgressBar,
+    IonFab,
+    IonFabButton,
+    IonIcon,
+    GetStatPipe,
   ],
 })
-export class DetailPokemonPage implements OnInit {
-  constructor() {}
+export class DetailPokemonPage {
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private pokemonService = inject(Pokemon);
+  private loadingController = inject(LoadingController);
 
-  ngOnInit() {}
+  public pokemon = signal<IPokemon | null>(null);
+
+  constructor() {
+    addIcons({ close });
+  }
+
+  async ionViewWillEnter() {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      const loading = await this.loadingController.create({
+        message: 'Cargando detalle...',
+      });
+      await loading.present();
+
+      this.pokemonService
+        .getPokemon(Number(id))
+        .then((data: IPokemon) => {
+          this.pokemon.set(data);
+        })
+        .catch((error) => {
+          console.error('Error al obtener el detalle:', error);
+        })
+        .finally(() => {
+          loading.dismiss();
+        });
+    }
+  }
+
+  goBack() {
+    this.router.navigate(['list-pokemon']);
+  }
 }

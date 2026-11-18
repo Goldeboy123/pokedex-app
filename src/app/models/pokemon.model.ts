@@ -1,27 +1,14 @@
-// Definimos una interface ya que solo vamos a difinir propiedades
+import { IStat } from './stat.model';
 
-import { IStat } from "./stat.model";
-
-/**
- * pokemon.model.ts: Al ser un modelo asegura que los datos se 
- */
-
-export interface Ipokemon {
-    id: number;
-    name: string;
-    typel1: string;
-    //?: Indicar que es opcional (Puede no existir)
-    typel2?: string;
-    sprite: string;
-    height: number;
-    weight: number;
-    abilities: string[];
-    hidenAbility?: string;
-   stats: IStat[];
-
-
-
-
+export interface IPokemon {
+  id: number;
+  name: string;
+  type1: string;
+  type2?: string;
+  sprite: string;
+  height: number;
+  weight: number;
+  abilities: string[];
+  hiddenAbility?: string;
+  stats: IStat[];
 }
-
-

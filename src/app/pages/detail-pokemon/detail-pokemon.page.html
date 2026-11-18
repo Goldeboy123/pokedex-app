@@ -1,13 +1,162 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>detail-pokemon</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">detail-pokemon</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <ion-fab vertical="top" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="goBack()">
+      <ion-icon name="close"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  @if (pokemon(); as poke) {
+    @if (poke.sprite) {
+      <div class="sprite-container">
+        <ion-img [src]="poke.sprite" class="pokemon-sprite" />
+      </div>
+    }
+
+    <!-- Tarjeta 1: Nombre, Tipos, Peso y Altura -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title class="ion-text-capitalize">{{ poke.name }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-grid>
+          <ion-row class="ion-align-items-center ion-margin-bottom">
+            <ion-col size="4">
+              <ion-text class="label-muted">TIPO:</ion-text>
+            </ion-col>
+            <ion-col size="4">
+              <ion-img [src]="'assets/img/' + poke.type1 + '.gif'" class="type-img" />
+            </ion-col>
+            <ion-col size="4">
+              @if (poke.type2) {
+                <ion-img [src]="'assets/img/' + poke.type2 + '.gif'" class="type-img" />
+              }
+            </ion-col>
+          </ion-row>
+
+          <ion-row class="ion-align-items-center">
+            <ion-col size="3">
+              <ion-text class="label-muted">PESO:</ion-text>
+            </ion-col>
+            <ion-col size="3">
+              <ion-text class="value-bold">{{ poke.weight }}</ion-text>
+            </ion-col>
+            <ion-col size="3">
+              <ion-text class="label-muted">ALTURA:</ion-text>
+            </ion-col>
+            <ion-col size="3">
+              <ion-text class="value-bold">{{ poke.height }}</ion-text>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Tarjeta 2: Habilidades -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Habilidades</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-grid>
+          <ion-row class="ion-align-items-start ion-margin-bottom">
+            <ion-col size="6">
+              <ion-text class="label-muted">PRINCIPALES:</ion-text>
+            </ion-col>
+            <ion-col size="6" class="ion-text-end">
+              @for (ability of poke.abilities; track ability) {
+                <div class="value-bold ion-text-capitalize">{{ ability }}</div>
+              }
+            </ion-col>
+          </ion-row>
+
+          @if (poke.hiddenAbility) {
+            <ion-row class="ion-align-items-center">
+              <ion-col size="6">
+                <ion-text class="label-muted">OCULTAS:</ion-text>
+              </ion-col>
+              <ion-col size="6" class="ion-text-end">
+                <ion-text class="value-bold ion-text-capitalize">{{ poke.hiddenAbility }}</ion-text>
+              </ion-col>
+            </ion-row>
+          }
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Tarjeta 3: Estadísticas Base -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Estadísticas Base</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-grid>
+          <ion-row class="ion-align-items-center stat-row">
+            <ion-col size="4"><ion-text class="label-muted">PS</ion-text></ion-col>
+            <ion-col size="2"><ion-text class="value-bold">{{ poke | getStat:'hp' }}</ion-text></ion-col>
+            <ion-col size="6">
+              <ion-progress-bar
+                [value]="(poke | getStat:'hp') / 100"
+                [color]="(poke | getStat:'hp') >= 50 ? 'warning' : 'danger'">
+              </ion-progress-bar>
+            </ion-col>
+          </ion-row>
+
+          <ion-row class="ion-align-items-center stat-row">
+            <ion-col size="4"><ion-text class="label-muted">ATAQUE</ion-text></ion-col>
+            <ion-col size="2"><ion-text class="value-bold">{{ poke | getStat:'attack' }}</ion-text></ion-col>
+            <ion-col size="6">
+              <ion-progress-bar
+                [value]="(poke | getStat:'attack') / 100"
+                [color]="(poke | getStat:'attack') >= 50 ? 'warning' : 'danger'">
+              </ion-progress-bar>
+            </ion-col>
+          </ion-row>
+
+          <ion-row class="ion-align-items-center stat-row">
+            <ion-col size="4"><ion-text class="label-muted">DEFENSA</ion-text></ion-col>
+            <ion-col size="2"><ion-text class="value-bold">{{ poke | getStat:'defense' }}</ion-text></ion-col>
+            <ion-col size="6">
+              <ion-progress-bar
+                [value]="(poke | getStat:'defense') / 100"
+                [color]="(poke | getStat:'defense') >= 50 ? 'warning' : 'danger'">
+              </ion-progress-bar>
+            </ion-col>
+          </ion-row>
+
+          <ion-row class="ion-align-items-center stat-row">
+            <ion-col size="4"><ion-text class="label-muted">AT. ESP.</ion-text></ion-col>
+            <ion-col size="2"><ion-text class="value-bold">{{ poke | getStat:'special-attack' }}</ion-text></ion-col>
+            <ion-col size="6">
+              <ion-progress-bar
+                [value]="(poke | getStat:'special-attack') / 100"
+                [color]="(poke | getStat:'special-attack') >= 50 ? 'warning' : 'danger'">
+              </ion-progress-bar>
+            </ion-col>
+          </ion-row>
+
+          <ion-row class="ion-align-items-center stat-row">
+            <ion-col size="4"><ion-text class="label-muted">DEF. ESP.</ion-text></ion-col>
+            <ion-col size="2"><ion-text class="value-bold">{{ poke | getStat:'special-defense' }}</ion-text></ion-col>
+            <ion-col size="6">
+              <ion-progress-bar
+                [value]="(poke | getStat:'special-defense') / 100"
+                [color]="(poke | getStat:'special-defense') >= 50 ? 'warning' : 'danger'">
+              </ion-progress-bar>
+            </ion-col>
+          </ion-row>
+
+          <ion-row class="ion-align-items-center stat-row">
+            <ion-col size="4"><ion-text class="label-muted">VELOCIDAD</ion-text></ion-col>
+            <ion-col size="2"><ion-text class="value-bold">{{ poke | getStat:'speed' }}</ion-text></ion-col>
+            <ion-col size="6">
+              <ion-progress-bar
+                [value]="(poke | getStat:'speed') / 100"
+                [color]="(poke | getStat:'speed') >= 50 ? 'warning' : 'danger'">
+              </ion-progress-bar>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
+  }
 </ion-content>
